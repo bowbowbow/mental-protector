@@ -1,19 +1,21 @@
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { routerRedux } from 'dva/router';
-import { Toast } from 'antd-mobile';
 import _ from 'lodash';
-import request from '../utils/request';
+import * as storage from '../utils/storage';
 
 export default {
   namespace: 'app',
   state: {
-    power: true,
+    power: false,
     keywords: [],
     warning: '',
   },
   subscriptions: {
     setupHistory({ dispatch, history }) {
+      storage.getState().then((state) => {
+        dispatch({ type: 'updateState', payload: state });
+      });
       history.listen(({ pathname, search }) => {
 
       });
@@ -26,10 +28,12 @@ export default {
   },
   reducers: {
     updateState(state, { payload }) {
-      return {
+      const nextState = {
         ...state,
         ...payload,
       };
+      storage.saveState(nextState);
+      return nextState;
     },
   },
 };

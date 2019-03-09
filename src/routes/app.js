@@ -43,7 +43,7 @@ class App extends React.Component {
           </div>
           <div className={styles.body}>
             {app.keywords.map((tag, index) => {
-              const isLongTag = tag.length > 20;
+              const isLongTag = tag.length > 12;
               const tagElem = (
                 <Tag key={tag}
                      closable
@@ -57,7 +57,7 @@ class App extends React.Component {
                          },
                        });
                      }}>
-                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                  {isLongTag ? `${tag.slice(0, 12)}...` : tag}
                 </Tag>
               );
               return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
@@ -117,7 +117,7 @@ class App extends React.Component {
           </div>
         </div>
         <div className={styles.info}>
-          <Icon type="info-circle"/> 단어 숨김 기능은 코인판 커뮤니티에서만 작동하며 보안상 거래소에서 작동하지 않습니다.
+          <Icon type="info-circle"/> 단어 숨김 기능은 코인판 커뮤니티에서만 작동하며 다른 사이트에서 작동하지 않습니다. 문의: clsrn1581@gmail.com
         </div>
       </div>
     );

@@ -52,6 +52,9 @@ const baseDevConfig = () => ({
         exclude: /node_modules/,
         options: {
           presets: ['react-hmre'],
+          plugins: [
+            ['import', { libraryName: 'antd-mobile', style: 'css' }],
+          ],
         },
       }, {
         test: /\.less$/,
@@ -59,16 +62,24 @@ const baseDevConfig = () => ({
           'style-loader', // creates style nodes from JS strings
           'css-loader?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', // translates CSS into CommonJS
           {
-            loader: 'less-loader' // compiles Less to CSS
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [autoprefixer],
-            },
+            loader: 'less-loader', // compiles Less to CSS
           },
         ],
-      }],
+      },
+      {
+        test: /\.css/,
+        use: [
+          'style-loader', // creates style nodes from JS strings
+          'css-loader',
+          // {
+          //   loader: 'postcss-loader',
+          //   options: {
+          //     plugins: () => [autoprefixer],
+          //   },
+          // },
+        ],
+      },
+    ],
   },
 });
 

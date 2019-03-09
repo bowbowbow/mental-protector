@@ -8,10 +8,7 @@ import request from '../utils/request';
 export default {
   namespace: 'app',
   state: {
-    loadingHide: null,
-    accessToken: window.localStorage.getItem('accessToken'),
-    locationPathname: '',
-    locationQuery: {},
+
   },
   subscriptions: {
     setupHistory({ dispatch, history }) {

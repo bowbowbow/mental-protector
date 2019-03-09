@@ -53,7 +53,7 @@ const baseDevConfig = () => ({
         options: {
           presets: ['react-hmre'],
           plugins: [
-            ['import', { libraryName: 'antd-mobile', style: 'css' }],
+            ['import', { libraryName: 'antd', style: 'css' }],
           ],
         },
       }, {

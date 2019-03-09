@@ -8,7 +8,9 @@ import request from '../utils/request';
 export default {
   namespace: 'app',
   state: {
-
+    power: true,
+    keywords: [],
+    warning: '',
   },
   subscriptions: {
     setupHistory({ dispatch, history }) {
@@ -23,12 +25,11 @@ export default {
     },
   },
   reducers: {
-    updateState(state, { payload: data }) {
-      const nextState = _.cloneDeep(state);
-      _.forIn(data, (value, key) => {
-        nextState[key] = value;
-      });
-      return nextState;
+    updateState(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
     },
   },
 };

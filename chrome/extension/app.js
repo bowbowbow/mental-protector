@@ -3,7 +3,7 @@ import dva from 'dva';
 import createHistory from 'history/createMemoryHistory';
 import { Router, Route, Switch } from 'dva/router';
 
-import Exchange from '../../src/routes/exchange';
+import App from '../../src/routes/app';
 import './app.less';
 
 // 1. Initialize
@@ -18,7 +18,7 @@ app.model(require('../../src/models/app'));
 app.router(({ history }) => (
   <Router history={history}>
     <Switch>
-      <Route path="/" exact component={Exchange}/>
+      <Route path="/" exact component={App}/>
     </Switch>
   </Router>
 ));

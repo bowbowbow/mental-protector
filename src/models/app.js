@@ -37,7 +37,7 @@ export default {
 
       yield put({ type: 'updateState', payload: { keywords } });
       const res = yield call(chromeAPI.sendKeywords, keywords);
-      if (res.hideCount) {
+      if (res && res.hideCount) {
         yield put({ type: 'updateState', payload: { hideCount: res.hideCount } });
       }
     },

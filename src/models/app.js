@@ -2,7 +2,7 @@ import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { routerRedux } from 'dva/router';
 import _ from 'lodash';
-import * as storage from '../utils/storage';
+import * as chromeAPI from '../utils/chromeAPI';
 
 export default {
   namespace: 'app',
@@ -10,11 +10,15 @@ export default {
     power: false,
     keywords: [],
     warning: '',
+    hideCount: {},
   },
   subscriptions: {
     setupHistory({ dispatch, history }) {
-      storage.getState().then((state) => {
+      chromeAPI.getState().then((state) => {
         dispatch({ type: 'updateState', payload: state });
+        if (state.keywords) {
+          dispatch({ type: 'updateKeywords', payload: { keywords: state.keywords } });
+        }
       });
       chrome.runtime.onMessage.addListener(
         (request, sender, sendResponse) => {
@@ -28,8 +32,14 @@ export default {
     },
   },
   effects: {
-    * serviceStatus({ payload }, { put, call }) {
-      // const res = yield call(service.serviceStatus, payload);
+    * updateKeywords({ payload }, { put, call }) {
+      const keywords = payload.keywords;
+
+      yield put({ type: 'updateState', payload: { keywords } });
+      const res = yield call(chromeAPI.sendKeywords, keywords);
+      if (res.hideCount) {
+        yield put({ type: 'updateState', payload: { hideCount: res.hideCount } });
+      }
     },
   },
   reducers: {
@@ -38,22 +48,7 @@ export default {
         ...state,
         ...payload,
       };
-
-      if (payload.keywords) {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          const tab = tabs[0];
-          if (tab.url.indexOf('https://coinpan.com') === -1) return;
-
-          chrome.tabs.sendMessage(tabs[0].id, {
-            action: 'hide_keywords',
-            data: { keywords: payload.keywords },
-          }, (response) => {
-
-          });
-        });
-      }
-
-      storage.saveState(nextState);
+      chromeAPI.saveState(nextState);
       return nextState;
     },
   },

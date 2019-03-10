@@ -6,7 +6,22 @@ export async function getState() {
   return new Promise((resolve) => {
     chrome.storage.local.get('state', (result) => {
       const state = result.state;
-      resolve(state ? JSON.parse(state) : {});
+      resolve(state ? JSON.parse(state) : { keywords: [], power: true });
+    });
+  });
+}
+
+export async function sendKeywords(keywords) {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab.url.indexOf('https://coinpan.com') === -1) return;
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: 'hide_keywords',
+        data: { keywords },
+      }, (response) => {
+        resolve(response);
+      });
     });
   });
 }

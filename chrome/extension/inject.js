@@ -10,6 +10,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const data = message.data;
 
   if (action === 'hide_keywords') {
+
+    const hideCount = {};
     const keywords = data.keywords;
 
     // console.log('beforeKeywords:', beforeKeywords, ', keywords:', keywords);
@@ -17,13 +19,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     for (let i = 0; i < keywords.length; i++) {
       const keyword = keywords[i];
 
+      hideCount[keyword] = 0;
+
       const beforeKeywordIndex = beforeKeywords.indexOf(keyword);
       if (beforeKeywordIndex >= 0) {
         beforeKeywords.splice(beforeKeywordIndex, 1);
       }
 
-      $(`a:contains("${keyword}")`).parent('li').hide();
-      $(`td:contains("${keyword}")`).parent('tr').hide();
+      let elements = $(`a:contains("${keyword}")`).parent('li');
+      hideCount[keyword] += elements.length;
+      elements.hide();
+
+      elements = $(`td:contains("${keyword}")`).parent('tr');
+      hideCount[keyword] += elements.length;
+      elements.hide();
     }
 
     for (let i = 0; i < beforeKeywords.length; i++) {
@@ -36,6 +45,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     beforeKeywords = keywords;
+
+    // console.log('hideCount :', hideCount);
+    sendResponse({hideCount});
   }
 });
 

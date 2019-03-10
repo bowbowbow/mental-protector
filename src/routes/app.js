@@ -17,7 +17,6 @@ class App extends React.Component {
   render() {
     const { app, dispatch } = this.props;
     const { inputVisible, inputValue } = this.state;
-    console.log('app :', app);
     return (
       <div className={styles.app}>
         {app.warning ? <Alert message={app.warning} type="warning" banner closable afterClose={() => {
@@ -32,7 +31,7 @@ class App extends React.Component {
             }}/>
         </div>
         <div className={styles.description}>
-          {app.power ? <span>현재 멘탈보호기가 작동 중입니다. <Icon type="smile" /></span> : <span>현재 멘탈보호기가 작동 중이지 않습니다. <Icon type="meh" /></span>}
+          {app.power ? <span>현재 멘탈보호기가 작동 중입니다. <Icon type="smile"/></span> : <span>현재 멘탈보호기가 작동 중이지 않습니다. <Icon type="meh"/></span>}
         </div>
         <div className={styles.section}>
           <div className={styles.header}>
@@ -43,21 +42,27 @@ class App extends React.Component {
           </div>
           <div className={styles.body}>
             {app.keywords.map((tag, index) => {
+
+              const tagColorProps = {};
               const isLongTag = tag.length > 12;
+              const count = app.hideCount[tag] ? app.hideCount[tag] : 0;
+              if (count) tagColorProps.color = 'green';
+              const tagText = isLongTag ? `${tag.slice(0, 12)}...` : tag;
               const tagElem = (
                 <Tag key={tag}
                      closable
+                     color={count ? 'green' : null}
                      afterClose={() => {
                        const keywords = _.cloneDeep(app.keywords);
                        _.pull(keywords, tag);
                        dispatch({
-                         type: 'app/updateState',
+                         type: 'app/updateKeywords',
                          payload: {
                            keywords,
                          },
                        });
                      }}>
-                  {isLongTag ? `${tag.slice(0, 12)}...` : tag}
+                  {tagText} ({count})
                 </Tag>
               );
               return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
@@ -97,7 +102,7 @@ class App extends React.Component {
                   const keywords = _.cloneDeep(app.keywords);
                   keywords.push(keyword);
                   dispatch({
-                    type: 'app/updateState',
+                    type: 'app/updateKeywords',
                     payload: {
                       keywords,
                     },

@@ -1,11 +1,11 @@
-import * as storage from '../../../src/utils/storage';
+import * as chromeAPI from '../../../src/utils/chromeAPI';
 
 function isInjected(tabId) {
   return chrome.tabs.executeScriptAsync(tabId, {
     code: `var injected = window.reactExampleInjected;
       window.reactExampleInjected = true;
       injected;`,
-    runAt: 'document_start'
+    runAt: 'document_start',
   });
 }
 
@@ -44,19 +44,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
   loadScript('inject', tabId, () => {
     console.log('load inject bundle success!');
-
-    storage.getState().then((state) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const tab = tabs[0];
-        if (tab.url.indexOf('https://coinpan.com') === -1) return;
-
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'hide_keywords',
-          data: state,
-        }, (response) => {
-
-        });
-      });
+    chromeAPI.getState().then((state) => {
+      chromeAPI.sendKeywords(state.keywords).then();
     });
   });
 });

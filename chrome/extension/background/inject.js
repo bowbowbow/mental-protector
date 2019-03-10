@@ -1,3 +1,5 @@
+import * as storage from '../../../src/utils/storage';
+
 function isInjected(tabId) {
   return chrome.tabs.executeScriptAsync(tabId, {
     code: `var injected = window.reactExampleInjected;
@@ -15,6 +17,7 @@ function loadScript(name, tabId, cb) {
     fetch(`http://localhost:3000/js/${name}.bundle.js`)
     .then(res => res.text())
     .then((fetchRes) => {
+      console.log('here');
       // Load redux-devtools-extension inject bundle,
       // because inject script and page is in a different context
       const request = new XMLHttpRequest();
@@ -25,6 +28,7 @@ function loadScript(name, tabId, cb) {
           chrome.tabs.executeScript(tabId, { code: request.responseText, runAt: 'document_start' });
         }
       };
+      console.log('inject!');
       chrome.tabs.executeScript(tabId, { code: fetchRes, runAt: 'document_end' }, cb);
     });
   }
@@ -38,5 +42,21 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const result = await isInjected(tabId);
   if (chrome.runtime.lastError || result[0]) return;
 
-  loadScript('inject', tabId, () => console.log('load inject bundle success!'));
+  loadScript('inject', tabId, () => {
+    console.log('load inject bundle success!');
+
+    storage.getState().then((state) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.url.indexOf('https://coinpan.com') === -1) return;
+
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'hide_keywords',
+          data: state,
+        }, (response) => {
+
+        });
+      });
+    });
+  });
 });

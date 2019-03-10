@@ -117,7 +117,7 @@ class App extends React.Component {
           </div>
         </div>
         <div className={styles.info}>
-          <Icon type="info-circle"/> 단어 숨김 기능은 코인판 커뮤니티에서만 작동하며 다른 사이트에서 작동하지 않습니다. 문의: clsrn1581@gmail.com
+          <Icon type="info-circle"/> 단어 숨김 기능은 coinpan.com의 게시판에서만 작동하며 다른 사이트에서 작동하지 않습니다. 문의: clsrn1581@gmail.com
         </div>
       </div>
     );

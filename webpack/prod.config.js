@@ -6,14 +6,13 @@ const customPath = path.join(__dirname, './customPublicPath');
 
 module.exports = {
   entry: {
-    todoapp: [customPath, path.join(__dirname, '../chrome/extension/todoapp')],
+    app: [customPath, path.join(__dirname, '../chrome/extension/app')],
     background: [customPath, path.join(__dirname, '../chrome/extension/background')],
-    inject: [customPath, path.join(__dirname, '../chrome/extension/inject')]
   },
   output: {
     path: path.join(__dirname, '../build/js'),
     filename: '[name].bundle.js',
-    chunkFilename: '[id].chunk.js'
+    chunkFilename: '[id].chunk.js',
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -21,38 +20,52 @@ module.exports = {
     new webpack.optimize.UglifyJsPlugin({
       comments: false,
       compressor: {
-        warnings: false
-      }
+        warnings: false,
+      },
     }),
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    })
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
   ],
   resolve: {
-    extensions: ['*', '.js']
+    extensions: ['*', '.js'],
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/,
-      query: {
-        presets: ['react-optimize']
-      }
-    }, {
-      test: /\.css$/,
-      use: [
-        'style-loader',
-        'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
-        {
-          loader: 'postcss-loader',
-          options: {
-            plugins: () => [autoprefixer]
-          }
-        }
-      ]
-    }]
-  }
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        query: {
+          presets: ['react-optimize'],
+          plugins: [
+            ['import', { libraryName: 'antd', style: 'css' }],
+          ],
+        },
+      }, {
+        test: /\.less$/,
+        use: [
+          'style-loader', // creates style nodes from JS strings
+          'css-loader?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', // translates CSS into CommonJS
+          {
+            loader: 'less-loader', // compiles Less to CSS
+          },
+        ],
+      },
+      {
+        test: /\.css/,
+        use: [
+          'style-loader', // creates style nodes from JS strings
+          'css-loader',
+          // {
+          //   loader: 'postcss-loader',
+          //   options: {
+          //     plugins: () => [autoprefixer],
+          //   },
+          // },
+        ],
+      }],
+  },
 };

@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "name": "멘탈보호기",
   "manifest_version": 2,
-  "description": "멘탈보호기",
+  "description": "어제 판 코인이 오늘 떡상했나요? 코인판에서 특정 코인글을 숨겨 멘탈을 보호하세요.",
   "browser_action": {
     "default_title": "멘탈보호기",
     "default_popup": "popup.html"
